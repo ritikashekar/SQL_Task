@@ -1,0 +1,126 @@
+ select * from Cars
+ 
+ select * from Customers
+ 
+ select * from Location
+ 
+ select * from Rentals
+----------------------------------------------------------------------------------------------------------
+
+ --Task 1 : Create a new table using query
+ 
+ create table Car_details as 
+ select car_id,label,model,brand,color from Cars
+ 
+ select * from Car_details
+ ----------------------------------------------------------------------------------------------------------
+ 
+ --Task 2 : Join 3 tables
+ 
+ select * from Cars AS c
+ INNER JOIN Customers AS cust
+ on c.car_id = cust.car_id
+ INNER JOIN Rentals AS r
+ on cust.car_id = r.car_id
+ 
+ --you can see the result below on Data output table
+ ---------------------------------------------------------------------------------------------------------------
+ 
+ --Task 3 : Join table and use WHERE clause
+ --Problem statement : using join function for table cars and customers where color = Black
+ 
+ select * from Cars as c
+ inner join Customers as cust
+ on c.car_id = cust.car_id
+ where color = 'Black'
+ ----------------------------------------------------------------------------------------------------------------
+ 
+ --Task 4 : Having,group by,order by
+ --Problem statement : show pick_up_date along with car_id whose amount is more than 1000
+ 
+ select car_id,amount,pick_up_date from Rentals
+ group by car_id,amount,pick_up_date 
+ having amount > 1000
+ order by pick_up_date
+ 
+ --you can see the result below on Data output table
+----------------------------------------------------------------------------------------------------------------------
+ 
+ --Task 5 : join table and execute having and group by function together
+ --Problem statement : show 'car-brand' that have rental amount is more than 1000
+ 
+ select c.label,c.brand,c.purchase_date,R.amount from Cars as c
+ inner join Rentals as R
+ on c.car_id = R.car_id
+ group by label,brand,purchase_date,amount
+ having amount > 1000
+-------------------------------------------------------------------------------------------------------------------------- 
+ 
+ --Task 6 : WINDOW FUNCTION (ROW_NUMBER)
+ --Problem statement : Calculate no. of rows of distinct 'label'
+ 
+ select label, ROW_NUMBER () OVER (
+ PARTITION BY label
+ )
+ from Cars
+-------------------------------------------------------------------
+
+
+ ---WINDOW FUNCTION (RANK)
+ --Problem statement : Give Rank to distinct 'label', 
+ --whose purchase_date BETWEEN 2023-01-15 AND 2024-12-30
+ 
+ select label,purchase_date, 
+ RANK() OVER(
+ PARTITION BY label
+ order by purchase_date 
+ )
+ from Cars
+ where purchase_date BETWEEN '2023-01-15' AND '2024-12-30'
+-------------------------------------------------------------------
+
+
+ -- WINDOW FUNCTION (DENSE_RANK)
+ --Problem statement : Give Dense_Rank to distinct 'label', 
+ --whose purchase_date BETWEEN 2023-01-15 AND 2024-12-30
+ 
+ select label,purchase_date, 
+ DENSE_RANK() OVER(
+ PARTITION BY label
+ order by purchase_date DESC
+ )
+ from Cars
+ where purchase_date BETWEEN '2023-01-15' AND '2024-12-30'
+ 
+ --you can see the result below on Data output table
+-------------------------------------------------------------------------------------------------------------------------- 
+ 
+ --Task 7 : subquery (Order By)
+ 
+ select * from Customers where car_id
+ 	IN ( select car_id from Cars where purchase_date BETWEEN '2023-01-15' AND '2025-12-15' 
+	    AND color = 'Black'	 
+	   )
+ Order by country
+ 
+ --you can see the result below on Data output table
+ 
+ -------------------------------------------------------------------------------------------------------------------------------
+ 
+ 
+ --Task on count
+ select distinct label from Cars
+ 
+ --total count
+ select count (label) from Cars
+ 
+ --to find no. of distinct values
+ select count (distinct label) from Cars
+ 
+ --to find counts of particular distinct counts
+ select label, count (label) from Cars group by label
+ 
+ --to find no. of unique values
+ select brand,count(*) from Cars
+ group by brand
+ having count(*) = 1
